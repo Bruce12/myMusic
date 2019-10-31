@@ -61,7 +61,7 @@ module.exports = {
       // change xxx-api/login => /mock-api/v1/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/api': {
-        target: `http://www.ly-dev.ymt360.com`,
+        target: ``,
         // target: `http://crm.ymt360.com`,
         router: function(req) {
           let url = req.url.replace(/\/$/, '')
@@ -71,7 +71,7 @@ module.exports = {
               return `http://localhost:${mockServerPort}`
             }
           }
-          return `http://www.ly-dev.ymt360.com`
+          return ``
         },
         changeOrigin: true, // needed for virtual hosted sites
         // pathRewrite: {
