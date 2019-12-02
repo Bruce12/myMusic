@@ -1,0 +1,23 @@
+{
+  "files.associations": {
+    "*.vue": "vue"
+  },
+  "eslint.autoFixOnSave": true,
+  "editor.formatOnSave": false,
+  "eslint.alwaysShowStatus": true,
+  "eslint.validate": [
+    {
+      "language": "typescript",
+      "autoFix": true
+    },
+    {
+      "language": "typescriptreact",
+      "autoFix": true
+    },
+    {
+      "language": "vue",
+      "autoFix": true
+    }
+  ],
+  "git.ignoreLimitWarning": true
+}

@@ -6,8 +6,8 @@ import Router, { RouteConfig } from 'vue-router'
 Vue.use(Router)
 export const constantRoutes: RouteConfig[] = [
   {
-    path: '/css_animation',
-    component: () => import(/* webpackChunkName: "csscss_animation" */'@/views/css-animation/animation.vue')
+    path: '/index',
+    component: () => import(/* webpackChunkName: "index" */'@/views/index/index.vue')
   }
 ]
 

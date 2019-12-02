@@ -43,7 +43,7 @@ export const find = (tag: string) => {
   return document.querySelectorAll(tag)
 }
 // 绑定事件
-export const eventOn = (element: HTMLElement, event:string, listener: EventListenerOrEventListenerObject) => {
+export const eventOn = (element: any, event:string, listener: EventListenerOrEventListenerObject) => {
   if (element.addEventListener) {
     element.addEventListener(event, listener, false)
   } else if ((element as any)['attachEvent']) {
@@ -54,7 +54,7 @@ export const eventOn = (element: HTMLElement, event:string, listener: EventListe
   return listener
 }
 // 移除事件
-export const eventOff = (el: HTMLElement, entName: string, handler?: any, option = false) => {
+export const eventOff = (el: any, entName: string, handler?: any, option = false) => {
   if (el.removeEventListener) {
     el.removeEventListener(entName, handler, option)
   } else if ((el as any)['deattachEvent']) {
@@ -62,7 +62,6 @@ export const eventOff = (el: HTMLElement, entName: string, handler?: any, option
   } else {
     (el as any)['on' + entName] = null
   }
-  return null
 }
 // 获取元素下面所有子元素
 export const findChildNodes = (el: HTMLElement) => {
@@ -88,7 +87,7 @@ export const getPosition = (el: HTMLElement, isRelative?: boolean) => {
     node = node.offsetParent
     if (isRelative) {
       const sty = node.currentStyle ? (node.currentStyle as any)['position'] : (getComputedStyle(node, null) as any)['position']
-      if (sty === 'relative') {
+      if (sty === 'relative' || sty === 'absolute') {
         node = null
       }
     }
@@ -102,4 +101,75 @@ export const getMousePostion = (el: HTMLElement) => {
     x: document.documentElement.scrollLeft + e.clientX,
     y: document.documentElement.scrollTop + e.clientY
   }
+}
+// 获取某个元素父及元素 某个css属性值
+export const existStyle = (el: HTMLElement, obj: { name: string, value: string }) => {
+  let node:any = el
+  let res = { resutl: false, el: null }
+  while (node != null && node.tagName !== 'BODY') {
+    let proName = getStyle(node, obj.name)
+    if (proName === obj.value) {
+      res.resutl = true
+      res.el = node
+      node = null
+    }
+    node = node && node.parentNode
+  }
+  return res
+}
+// 获取dom 元素样式
+export const getStyle = (el: HTMLElement, attr?: any): any => {
+  let getCss = getComputedStyle ? getComputedStyle(el, null) : (el as any).currentStyle
+  return attr ? getCss[attr] : getCss
+}
+// 简单动画
+export const animate = (el: HTMLDivElement, option: any, fn?: Function) => {
+  // delay
+  let delay = 0
+  if (option.delay !== undefined) {
+    delay = option.delay
+    delete option.delay
+  }
+  clearTimeout((el as any).delayTimer)
+  clearInterval((el as any).timer)
+  ;(el as any).delayTimer = setTimeout(() => {
+    (el as any).timer = setInterval(() => {
+      // 属性当前值
+      for (let key in option) {
+        let attr = key
+        let target = attr === 'opacity' ? option[key] * 100 : option[key]
+        // 防止连续移入元素会生成多个计时器，所以进入之前先清除
+        var icur = 0
+        if (attr === 'opacity') {
+        // 这里用Math.round()处理是防止出现数据在目标值附近抖动的情况，因为计算机对浮点数的计算存在误差
+          icur = Math.round(parseFloat(getStyle(el, attr)) * 100)
+        } else {
+          icur = parseInt(getStyle(el, attr))
+        }
+        // 动画的速度
+        var speed = (target - icur) / 10
+        speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed)
+        // 检测停止
+        if (Number.isNaN(speed)) {
+          clearInterval((el as any).timer)
+        }
+        if (icur === target) {
+          delete option[key]
+          if (JSON.stringify(option) === '{}') {
+            clearInterval((el as any).timer)
+            if (typeof fn === 'function') fn()
+          }
+        } else {
+          if (attr === 'opacity') {
+          // IE
+            el.style.filter = 'alpha(opacity:' + (icur + speed) + ')'
+            // 非IE
+            el.style.opacity = String((icur + speed) / 100)
+          } else {
+            (el.style as any)[attr] = icur + speed + 'px'
+          }
+        }
+      }
+    }, 10)
+  }, delay)
 }
