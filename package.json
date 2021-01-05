@@ -10,7 +10,7 @@
   "author": "Bruce",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "directory-tree": "^2.2.4",
     "echarts": "^4.3.0",
     "element-ui": "^2.12.0",
